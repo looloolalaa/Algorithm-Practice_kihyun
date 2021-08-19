@@ -14,7 +14,7 @@ public:
 	int getKey() { return key; }
 	int getStart() { return i; }
 	int getEnd() { return j; }
-	void display() { printf("%d%d\n%d\n", i, j, key); }
+	void display() { printf("%4d", key); }
 };
 
 class MaxHeap {
@@ -131,24 +131,14 @@ public:
 				int left_key = getLeft(parent).getKey();
 				int right_key = getRight(parent).getKey();
 
-				if (child == size) { //왼쪽 자식만 있으면
-					if (left_key >= key) break;
-					else {
-						node[parent] = getLeft(parent);
-						parent = parent * 2;
-						child = parent * 2;
-					}
+				if (child != size && left_key > right_key) child++;
+				if (node[child].getKey() >= key) break;
+				else {
+					node[parent] = node[child];
+					parent = child;
+					child = parent * 2;
 				}
-
-				else { //자식이 둘 다 있으면
-					if (left_key > right_key) child++;
-					if (node[child].getKey() >= key) break;
-					else {
-						node[parent] = node[child];
-						parent = child;
-						child = parent * 2;
-					}
-				}
+				
 			}
 			node[parent]=key_node;
 
@@ -157,15 +147,15 @@ public:
 	}
 };
 
-//void heapSort(int data[], int size) {
-//	MaxHeap heap;
-//	for (int i = 0; i < size; i++)
-//		heap.insert(HeapNode(data[i]));
-//
-//	for (int i = size - 1; i >= 0; i--) 
-//		data[i] = heap.remove().getKey();
-//}
-//
+void heapSort(int data[], int size) {
+	MaxHeap heap;
+	for (int i = 0; i < size; i++)
+		heap.insert(HeapNode(data[i]));
+
+	for (int i = size - 1; i >= 0; i--) 
+		data[i] = heap.remove().getKey();
+}
+
 //int main() {
 //	MinHeap heap;
 //	heap.insert(HeapNode(10));

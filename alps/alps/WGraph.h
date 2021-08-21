@@ -121,15 +121,100 @@ public:
 				
 	}
 
+
+	void Dijkstra(int start) {
+		int temp = start;
+		for (int i = 0; i < size; i++) {
+			visited[i] = false;
+			min_dist[i] = INF;
+		}
+
+		min_dist[start] = 0;
+		for (int i = 0; i < size; i++) {
+			visited[start] = true;
+			for (int j = 0; j < size; j++) {
+				if (hasEdge(start, j) && !visited[j]) {
+					int old_dist = min_dist[j];
+					int new_dist = min_dist[start] + getEdge(start, j);
+					if (old_dist > new_dist)
+						min_dist[j] = new_dist;
+				}
+			}
+			start = get_min_index();
+		}
+
+		printf("%c 에서 부터 각 노드까지의 최단거리\n", getVertex(temp));
+		for (int i = 0; i < size; i++)
+			printf("%c: %d  ", getVertex(i), min_dist[i]);
+		printf("\n");
+	}
+
+
+	void show_path(int go[][MAX_SIZE], int i, int j) {
+		int start = i, end = j;
+		int point = start;
+		while (point != end) {
+			printf("%c->", getVertex(point));
+			point = go[point][end];
+		}
+		printf("%c", getVertex(end));
+	}
+
+	void Floyd() {
+
+
+		int D[MAX_SIZE][MAX_SIZE];  //최단 거리
+		int go[MAX_SIZE][MAX_SIZE];  //최단 경로
+
+		//초기화
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				D[i][j] = adj[i][j];
+				go[i][j] = -1;
+				if (hasEdge(i, j))
+					go[i][j] = j;
+			}
+		}
+
+		//Floyd
+		for (int k = 0; k < size; k++) {
+			for (int i = 0; i < size; i++) {
+				for (int j = 0; j < size; j++) {
+					int old_dist = D[i][j];
+					int new_dist = D[i][k] + D[k][j];
+					if (new_dist < old_dist) {
+						D[i][j] = new_dist;
+						go[i][j] = go[i][k];
+					}
+				}
+			}
+		}
+
+
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				printf("%c => %c 의 최단 경로와 비용: ", getVertex(i), getVertex(j));
+				show_path(go, i, j);
+				printf(" (%d)\n", D[i][j]);
+			}
+			printf("\n");
+		}
+
+
+	}
+
 };
 
 
 
 int main() {
 	WGraph g;
-	g.load("graph.txt");
+	g.load("wgraph_shortest.txt");
 	//g.display();
 
 	//g.Kruskal();
-	g.Prim(0);
+	//g.Prim(0);
+
+	//g.Dijkstra(0);
+	g.Floyd();
 }
